@@ -27,17 +27,18 @@ def node_distance(pos_tensor):
 # compute graph-dist matrix once since it never changes
 # graph_dist is nxn symmetric matrix with 0 diagonal
 # weight is nxn symmetric matrix matrix
-def stress_loss(node_dist,graph_dist,weight):
-    l = 1 / torch.max(graph_dist)
+def stress_loss(node_dist,graph_dist,diam,weight):
+    l = 1 / diam
     return((torch.sum(torch.mm(weight, (node_dist-l*graph_dist)**2))/2)/node_dist.shape[0]**2)
 
 
-def ideal_edge_length_loss(adj,node_dist,m):
+def ideal_edge_length_loss(adj,node_dist,diam,m):
     # filter distances only if edge exists
     edge_lengths = node_dist *  adj
-    avg_edge_length = torch.sum(edge_lengths)/m
+    #avg_edge_length = torch.sum(edge_lengths)/m
+    desired_edge_length = 1/diam #-> this can be set to average edge length if desired
     edges = edge_lengths[edge_lengths != 0]
-    return(torch.sqrt(torch.square((edges - avg_edge_length) / avg_edge_length).sum()/ m))
+    return(torch.sqrt(torch.square((edges - desired_edge_length) / desired_edge_length).sum()/ m))
 
 
 
@@ -68,7 +69,6 @@ def cosine_of_angle(e1,e2,pos):
     idx_2 = torch.tensor([e2[0],e2[1]])
     s1=pos[idx_1[1]] - pos[idx_1[0]]
     s2=pos[idx_2[1]] - pos[idx_2[0]]
-    # create
     cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
     return(cos(s1,s2))
 
@@ -86,7 +86,6 @@ def crossing_angle_loss(crossings,pos):
             c_a = cosine_of_angle(e1,e2,pos)
             loss+=c_a**2
             current_angle = get_angle_from_cosine(c_a)
-            #print(current_angle)
             if current_angle < worst_angle:
                 worst_angle = current_angle
                 involved_edges = (e1,e2)
@@ -103,7 +102,6 @@ def angular_resolution(adj,n,pos,max_degree,s=1):
     counter = 0
     for j in range(n):
         #for every pair of adjacent edges, compute angle
-        # this computes actually a bit too much
         adjacent_edges = adj[j].nonzero(as_tuple=True)[0]
         deg_j = len(adjacent_edges)
         for ind_i in range(deg_j-1):
@@ -131,13 +129,11 @@ def vertex_resolution(node_dist,max_degree,n):
             loss += torch.max(torch.tensor(0).float(),(1-dist_ij)**2)
             if dist_ij < q_vr:
                 q_vr = dist_ij
-                #worst_nodes = (i,j)
-    #maybe return worst_nodes
     return(loss / (n*(n-1)/2),q_vr)
 
 
 
-#have to look at this again
+
 def crossings_loss(pos_tensor,edge_pairs,n,boundary_lr=0.15):
     rand_bounds = 1/5 * np.random.random_sample((len(edge_pairs),3,1)) -0.1
     boundaries = torch.tensor(rand_bounds,dtype=torch.float, requires_grad=True)
@@ -166,6 +162,5 @@ def crossings_loss(pos_tensor,edge_pairs,n,boundary_lr=0.15):
     loss1 = torch.nn.functional.relu(1-pred1*(1)).sum()
     loss2 = torch.nn.functional.relu(1-pred2*(-1)).sum()
     loss = loss1+loss2
-    return loss/(len(edge_pairs)*10)   #*(0.01) why is that times 0.01
+    return loss/(len(edge_pairs)*10)  
 
-    #q is simply number of crosssings.
