@@ -222,8 +222,9 @@ def choose_vertex_from_pool(pos,edges,consts,stress,ar,vr,cross,partial_energy,e
 
     #EV-Res
     if vr_flag and vr_val:
-        valid_dist= np.where(vr.edge_vertex_data >= 0)[0]
-        v,e = (np.unravel_index(valid_dist[np.argmin(vr.edge_vertex_data[valid_dist],axis=None)],vr.edge_vertex_data.shape))
+        valid_idx= np.where(vr.edge_vertex_data >= 0)[0]
+        flat_idx = vr.edge_vertex_data[valid_idx].argmin()
+        v,e = np.unravel_index(flat_idx,vr.edge_vertex_data.shape)
         ev_subpool = [v,edges[e][0],edges[e][1]]
 
 
