@@ -16,6 +16,7 @@ def GD_squared(G,pos,timelimit,crit_weights):
     # Compute static structures
     graph_dist = graph_distance(G,G.number_of_nodes())
     graph_dist_tens = torch.from_numpy(graph_dist).float()
+    diameter = torch.max(graph_dist_tens)
     possible_crossing_edges = edge_pairs_for_crossings(edges)
 
 
@@ -40,7 +41,7 @@ def GD_squared(G,pos,timelimit,crit_weights):
 
         loss = torch.tensor(0.0)
         if criteria_weights['stress'] > 0:
-            l = stress_loss(node_dist,graph_dist_tens,weight_for_stress)
+            l = stress_loss(node_dist,graph_dist_tens,diameter,weight_for_stress)
             loss += torch.mul(criteria_weights['stress'],l)
 
         if criteria_weights['crossangle'] > 0 and crossingnumber > 0:
@@ -48,7 +49,7 @@ def GD_squared(G,pos,timelimit,crit_weights):
             loss += torch.mul(criteria_weights['crossangle'],l)
 
         if criteria_weights['idealedge'] > 0:
-            l = ideal_edge_length_loss(adj_matrix,node_dist,m)
+            l = ideal_edge_length_loss(adj_matrix,node_dist,diameter,m)
             loss += torch.mul(criteria_weights['idealedge'],l)
 
         if criteria_weights['angularres'] > 0:
