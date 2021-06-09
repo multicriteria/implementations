@@ -165,7 +165,8 @@ def compute_criteria_new(const,stress,ar,vr,cross,list_of_nodes,init,criteria_we
     #1.Stress
     if s_flag:
         stress_val_of_graph = np.sum(stress.vertex_stress)/2
-        c_ST = stress_val_of_graph / ((const.n*(const.n-1)/2) * math.sqrt(2))
+        largest_dist = np.max(stress.node_dist)
+        c_ST = stress_val_of_graph / ((const.n*(const.n-1)/2) * largest_dist)
 
     #2.Crossing angle
     if ca_flag:
