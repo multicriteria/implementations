@@ -36,12 +36,12 @@ def Bigangle(G,iterations=50,size=0.5,pos=None):
 
 # Set weights for individual criteria
 
-crit_weights = { 'stress' :1/6, #seems to work -> hard to see
-                   'crossangle' :1/6, #works
-                   'idealedge' : 1/6, #works
-                   'angularres' : 1/6, #seems to work not
-                   'vertexres' : 1/6,#works
-                   'crossnum' : 1/6 } #works
+crit_weights = { 'stress' :1/6, 
+                   'crossangle' :1/6, 
+                   'idealedge' : 1/6, 
+                   'angularres' : 1/6, 
+                   'vertexres' : 1/6,
+                   'crossnum' : 1/6 } 
 
 # Create /Load graph -> most algorithms require (G,pos) as input, where G is nx.Graph() and pos is np.array of dimension(|V|,2)
 
