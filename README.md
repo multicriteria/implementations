@@ -34,7 +34,7 @@ pip3 install rtree
 
 #### Production
 
-1. Get the sources to the target server by checking out this repository on the target server via `git clone https://github.com/multicriteria/implementations.git && cd implementations`
-2. run main.py
+1. Get the sources onto your system by checking out this repository on the target server via `git clone https://github.com/multicriteria/implementations.git && cd implementations`
+2. Run main.py
 
 You can change the output drawing by altering the pos_o in line 63 to any other pos that you want the drawing of. For example replace it with 'pos_dh' for the Davidson & Harel algorithm.
