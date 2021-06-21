@@ -16,7 +16,7 @@ echo "export PATH=\"~/.local/bin:\$PATH\"" >> ~/.bashrc # add pip installed bina
 pip3 install pipenv                                     # installs pipenv
 exec bash                                               # load the new PATH variable
 python3 --version                                       # should show at least python 3.6 or higher
-pipenv --version                                        # should show something like pipenv, version 2018.11.26
+pipenv --version                                        # should show something like pipenv, version 2021.5.29
 ```
 To run the implementation we have to install some required packages
 
